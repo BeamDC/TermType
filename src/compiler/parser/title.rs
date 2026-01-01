@@ -1,4 +1,4 @@
-use crate::parser::layout::{Border, Justify};
+use crate::compiler::parser::layout::{Border, Justify};
 
 #[derive(Debug)]
 pub struct Title {

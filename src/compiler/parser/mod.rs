@@ -1,10 +1,10 @@
-use crate::parser::ast::{Ast, AstNode};
-use crate::parser::text::Text;
+use crate::compiler::parser::ast::{Ast, AstNode};
+use crate::compiler::parser::text::Text;
 
-mod ast;
-mod title;
-mod text;
-mod layout;
+pub mod ast;
+pub mod title;
+pub mod text;
+pub mod layout;
 
 #[derive(Debug)]
 pub struct Parser<'p> {

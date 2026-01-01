@@ -1,4 +1,4 @@
-use crate::parser::layout::Justify;
+use crate::compiler::parser::layout::Justify;
 
 #[derive(Debug)]
 pub struct Text {

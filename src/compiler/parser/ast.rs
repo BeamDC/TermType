@@ -1,6 +1,6 @@
 use std::ops::{Index, IndexMut};
-use crate::parser::text::Text;
-use crate::parser::title::Title;
+use crate::compiler::parser::text::Text;
+use crate::compiler::parser::title::Title;
 
 #[derive(Debug)]
 pub struct NodeIndex(pub usize);
