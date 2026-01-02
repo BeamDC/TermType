@@ -4,19 +4,21 @@ use crate::compiler::parser::Parser;
 use crate::compiler::pdf::{PdfData, PdfRenderer};
 
 mod compiler;
+mod util;
 
 fn main() {
     let src = r#"hello world :3"#;
     let mut parser = Parser::new(src);
     let ast = parser.parse();
-    println!("{:#?}", ast);
+    // println!("{:#?}", ast);
 
     let mut renderer = PdfRenderer::new(ast);
     let metadata = PdfData {
         name: "pdf",
         path: "./output.pdf",
     };
-    renderer.render(metadata);
+    let warnings = renderer.render(metadata);
+    println!("{:#?}", warnings);
     // let line = Line {
     //     // Quadratic shape. The "false" determines if the next (following)
     //     // point is a bezier handle (for curves)
@@ -96,11 +98,4 @@ fn main() {
     // ];
     //
     // let page1 = PdfPage::new(Mm(215.9), Mm(279.4), page1_contents);
-    //
-    // let pdf_bytes: Vec<u8> = doc
-    //     .with_pages(vec![page1])
-    //     .save(&PdfSaveOptions::default(), &mut vec![]);
-    //
-    // fs::write("./output.pdf", &pdf_bytes)
-    //     .expect("Unable to write file");
 }
