@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::ops::{Index, IndexMut};
 use crate::compiler::parser::text::Text;
 use crate::compiler::parser::title::Title;
@@ -15,17 +16,23 @@ pub enum AstNode {
 }
 
 #[derive(Debug)]
-pub struct Ast(Vec<AstNode>);
+pub struct Ast(VecDeque<AstNode>);
 
 impl Ast {
     pub fn new() -> Ast {
-        Ast(vec![])
+        Ast(VecDeque::new())
     }
 
     /// append a node to the ['Ast']
     #[inline]
     pub fn push(&mut self, node: AstNode) {
-        self.0.push(node);
+        self.0.push_back(node);
+    }
+
+    /// remove and return the next node in the [`Ast`]
+    #[inline]
+    pub fn pop(&mut self) -> Option<AstNode> {
+        self.0.pop_front()
     }
 }
 

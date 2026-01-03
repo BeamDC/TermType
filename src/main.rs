@@ -12,12 +12,15 @@ fn main() {
     let ast = parser.parse();
     // println!("{:#?}", ast);
 
-    let mut renderer = PdfRenderer::new(ast);
     let metadata = PdfData {
         name: "pdf",
         path: "./output.pdf",
+        width: Mm(inches!(8.5)),
+        height: Mm(inches!(11)),
     };
-    let warnings = renderer.render(metadata);
+
+    let mut renderer = PdfRenderer::new(ast, metadata);
+    let warnings = renderer.render();
     println!("{:#?}", warnings);
     // let line = Line {
     //     // Quadratic shape. The "false" determines if the next (following)
