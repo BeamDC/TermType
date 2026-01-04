@@ -1,16 +1,16 @@
 use crate::compiler::parser::ast::{Ast, AstNode};
-use crate::compiler::parser::text::Text;
 
 pub mod ast;
-pub mod title;
-pub mod text;
 pub mod layout;
+pub mod attrs;
 
 #[derive(Debug)]
 pub struct Parser<'p> {
     raw: &'p str,
     start: usize,
     pos: usize,
+    /// the index of the next node to be inserted
+    next_node: usize,
 }
 
 impl<'p> Parser<'p> {
@@ -19,6 +19,7 @@ impl<'p> Parser<'p> {
             raw,
             start: 0,
             pos: 0,
+            next_node: 0,
         }
     }
 
@@ -45,10 +46,24 @@ impl<'p> Parser<'p> {
 
     fn next(&mut self) -> Option<AstNode> {
         let next = match self.peek() {
+            // header
+            Some('#') => {
+                todo!()
+            }
+            // attribute list
+            Some('[') => {
+                todo!()
+            }
+            // block
+            Some('{') => {
+                todo!()
+            }
+            // plain text
             Some(_) => {
-                AstNode::Text(Text::new(
-                    self.consume_while(|c: char| c != '\\'),
-                ))
+                AstNode::Text {
+                    justify: Default::default(),
+                    content: self.consume_while(|c| c != '\n'),
+                }
             }
             None => return None
         };

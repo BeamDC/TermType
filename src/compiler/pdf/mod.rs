@@ -3,7 +3,6 @@ use std::path::Path;
 use crate::compiler::parser::ast::{Ast, AstNode};
 use printpdf::*;
 use crate::{inches, load_fonts};
-use crate::compiler::parser::text::Text;
 
 pub struct PdfData<'pd, P: AsRef<Path>> {
     pub name: &'pd str,
@@ -25,11 +24,16 @@ pub struct PdfRenderer<'pd, P: AsRef<Path>> {
     ast: Ast,
     meta: PdfData<'pd, P>,
     doc: PdfDocument,
+    doc_cursor: (f32,f32), // (x, y) pair for the current coords of the drawing cursor
     pages: Vec<PdfPage>,
     fonts: FontData,
 }
 
 impl<'pd, P: AsRef<Path>> PdfRenderer<'pd, P> {
+    const WIDTH: Mm = Mm(inches!(8.5));
+    const HEIGHT: Mm = Mm(inches!(11));
+    const MARGINS: Mm = Mm(10.0);
+
     /// construct a new [`PdfRenderer`] from the given ast.
     pub fn new(ast: Ast, meta: PdfData<'pd, P>) -> Self {
         let mut doc = PdfDocument::new(meta.name);
@@ -44,54 +48,19 @@ impl<'pd, P: AsRef<Path>> PdfRenderer<'pd, P> {
             ast,
             meta,
             doc,
+            doc_cursor: (0.0, 0.0),
             pages: vec![],
             fonts,
         }
-    }
-
-    /// renders plain text nodes
-    fn render_text(&mut self, text: Text) {
-        let width = Mm(inches!(8.5));
-        let height = Mm(inches!(11));
-
-        let text_pos = Point {
-            x: Mm(10.0).into(),
-            y: (height - Mm(10.0)).into(),
-        }; // from bottom left
-
-        // todo : check if there is room for the text on the current page, if so write it all.
-        // otherwise, cut it off as far as it can go, create another page, and continue.
-        // also handle text wrapping.
-
-        let mut pages = vec![PdfPage::new(width, height, vec![
-            Op::SetLineHeight { lh: Pt(12.0) },
-            Op::SetWordSpacing { pt: Pt(0.0) }, // probably not needed, but ill leave it here
-            Op::SetCharacterSpacing { multiplier: 1.0 },
-            Op::SetFontSize { font: self.fonts.primary.clone(), size: Pt(12.0) },
-
-            Op::StartTextSection,
-            Op::SetTextCursor { pos: text_pos },
-            Op::WriteText {
-                items: vec![TextItem::Text("Lorem ipsum".to_string())],
-                font: self.fonts.primary.clone(),
-            },
-            Op::AddLineBreak,
-
-            Op::WriteText {
-                items: vec![TextItem::Text("dolor sit amet".to_string())],
-                font: self.fonts.primary.clone(),
-            },
-            Op::AddLineBreak,
-            Op::EndTextSection,
-        ])];
     }
 
     /// constructs a `.pdf` file from `self`, returning the bytes of the file
     pub fn render(&mut self) -> Vec<String> {
         while let Some(node) = self.ast.pop() {
             match node  {
-                AstNode::Text(t) => self.render_text(t),
+                AstNode::Text { .. } => todo!(),
                 AstNode::Block { .. } => todo!(),
+                AstNode::Header { .. } => todo!(),
             }
         }
 

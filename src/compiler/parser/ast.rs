@@ -1,16 +1,32 @@
 use std::collections::VecDeque;
 use std::ops::{Index, IndexMut};
-use crate::compiler::parser::text::Text;
-use crate::compiler::parser::title::Title;
+use crate::compiler::parser::layout::{Border, Justify};
 
 #[derive(Debug)]
 pub struct NodeIndex(pub usize);
 
 #[derive(Debug)]
 pub enum AstNode {
-    Text(Text),
+    /// a header
+    /// # Level 1
+    /// ## Level 2
+    /// ### Level 3
+    /// #### Level 4
+    /// ##### Level 5
+    /// ###### Level 6
+    Header {
+        level: u8,
+        content: NodeIndex,
+    },
+    /// plain text
+    Text {
+        justify: Justify,
+        content: String,
+    },
+    /// A block. Can have a title and border, and can contain any other [`AstNode`]
     Block {
-        title: Title,
+        title: String,
+        border: Border,
         content: NodeIndex,
     }
 }
